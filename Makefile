@@ -11,4 +11,4 @@ shieldsql.o: ./src/shieldsql.c ./include/shieldsql.h
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm -f *.o shieldServer
+	rm -f *.o server
