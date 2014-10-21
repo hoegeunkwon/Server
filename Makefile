@@ -2,13 +2,19 @@ CC = gcc
 CFLAGS = -Wall
 LDFLAGS = -lm -lpthread -lmysqlclient
 
-all: server
+all: ShieldServer
 
-server: shieldsql.o
+ShieldServer: shieldsql.o server.o shield_main.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-shieldsql.o: ./src/shieldsql.c ./include/shieldsql.h
+shield_main.o: ./src/shield_main.c
+	$(CC) $(CFLAGS) -c $<
+
+server.o: ./src/server.c
+	$(CC) $(CFLAGS) -c $<
+
+shieldsql.o: ./src/shieldsql.c
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm -f *.o server
+	rm -f *.o ShieldServer

@@ -1,8 +1,9 @@
 #ifndef _SHIELDSQL
 #define _SHIELDSQL
 
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "/usr/include/mysql/mysql.h"
 
 #define TRUE	0
@@ -17,6 +18,7 @@ typedef struct UserInfo
 	char name[20];
 	char perm[20];
 	int groupid;
+	int fd;
 } UserInfo;
 
 int connectDB(MYSQL** db, char* serverip, char* user, char* pass, char* databaseName);

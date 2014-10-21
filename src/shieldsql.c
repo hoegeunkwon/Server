@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "./../include/shieldsql.h"
 /*
 int main()
@@ -73,6 +72,7 @@ int getQueryDataRow(MYSQL_RES** res, UserInfo* data)
 	strcpy(data->name, row[3]);
 	strcpy(data->perm, row[4]);
 	data->groupid = atoi(row[5]);
+	data->fd = atoi(row[6]);
 
 	return TRUE;
 
@@ -85,8 +85,10 @@ void closeDB(MYSQL** db, MYSQL_RES** res)
 
 void display(MYSQL_RES** res, UserInfo* data)
 {
+	printf("%10s %10s %10s %10s %10s %10s\n", 
+			"id", "pw", "name", "perm", "groupid", "fd");
 	while(getQueryDataRow(res, data) == TRUE) {
-		printf("%10s %10s %10s %10s %d\n", 
-		data->id, data->pw, data->name, data->perm, data->groupid);
+		printf("%10s %10s %10s %10s %10d %10d\n", 
+		data->id, data->pw, data->name, data->perm, data->groupid, data->fd);
 	}
 }
