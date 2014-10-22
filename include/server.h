@@ -17,9 +17,9 @@
 #include "./../include/shieldsql.h"
 
 #define BUFF_SIZE 512
-#define NAME_SIZE 20
+#define FIELD_SIZE 20
 #define ACCESS_USER_SIZE 100
-#define SERVER_PORT 5555
+#define SERVER_PORT 55555
 
 #define DEBUG
 #ifdef DEBUG
@@ -34,6 +34,14 @@ pthread_mutex_t mutex;
 
 int createServer(int);
 void* connectClient(void*);
+void disconnectClient(int clientSockFd);
+void insertClientData(int clientSockFd, UserInfo* data);
+void parentsClient(int clientSockFd, char* buff);
+void childClient(int clientSockFd, char* buff);
+int checkUserID(char* id);
+int checkUserPW(char* id, char* pw, UserInfo* data);
+int joinParents(char* id, char* pw);
+void testDisplay(UserInfo* data);
 //int sendMsg(int, char*, char*, int);
 //int msgParsing(Msg*, const char*);
 

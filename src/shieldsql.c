@@ -79,7 +79,9 @@ int getQueryDataRow(MYSQL_RES** res, UserInfo* data)
 }
 void closeDB(MYSQL** db, MYSQL_RES** res)
 {
-	mysql_free_result(*res);
+	if(res != 0) {
+		mysql_free_result(*res);
+	}
 	mysql_close(*db);
 }
 
