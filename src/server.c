@@ -43,14 +43,6 @@ void* connectClient(void* arg)
 
 	disconnectClient(clientSockFd);
 
-// if not join user 
-// set user of db
-// 중복검사
-// else
-// server memory upload
-
-	
-
 	return 0;
 }
 
@@ -62,6 +54,7 @@ void disconnectClient(int clientSockFd)
 		if(accessUserArr[i].fd == clientSockFd) {
 			accessUserArr[i] = accessUserArr[accessUserNum-1];
 			accessUserNum--;
+			close(clientSockFd);
 			break;
 		}
 	}
@@ -96,16 +89,12 @@ void parentsClient(int clientSockFd, char* buff)
 		char id[FIELD_SIZE];
 		char pw[FIELD_SIZE];
 
-
-		//printf("%s.\n", buff);
-
 		p = strtok(buff, " "); if(p == 0) continue;
 		strcpy(tmp, p);
 		p = strtok(NULL, " "); if(p == 0) continue;
 		strcpy(id, p);
 		p = strtok(NULL, " "); if(p == 0) continue;
 		strcpy(pw, p);
-
 
 		printf("%s %s %s\n", tmp, id, pw);
 
@@ -123,15 +112,15 @@ void parentsClient(int clientSockFd, char* buff)
 		
 		printf("%s %s %s\n", tmp, id, pw);
 		if(strcmp(tmp, "join") == 0) {	// join msg
-			puts("in join");
-
 			if(checkUserID(id) == FALSE) {	// possible join
-				puts("possible join");
+				puts("Possible join");
 				if(joinParents(id, pw) == TRUE) {
 					puts("Success Join");
 				} else {
-					puts("not Join");
+					puts("Not Join");
 				}
+			} else {
+				puts("Join Fail");
 			}
 		}
 	}
@@ -145,7 +134,6 @@ void parentsClient(int clientSockFd, char* buff)
 void childClient(int clientSockFd, char* buff)
 {
 	puts("child");
-
 }
 
 int checkUserID(char* id)
@@ -190,25 +178,49 @@ int checkUserPW(char* id, char* pw, UserInfo* data)
 
 int joinParents(char* id, char* pw)
 {
+	int randGroupid;
 	MYSQL* db;
+	MYSQL_RES* res;
 	char queryBuff[128];
-
-	puts("joinParents fun");
 	
+	connectDB(&db, "localhost", "root", "jjssm", "shield");
+
+	randGroupid = getRandGroupid(&db, &res);
+
 	sprintf(queryBuff, 
-	"insert into userlist(id, pw, name, perm, groupid, fd) values('%s', '%s', '부모', 'parents', 54321, -1)", id, pw);
+	"insert into userlist(id, pw, name, perm, groupid, fd) values('%s', '%s', '부모', 'parents', %d, -1)", 
+	id, pw, randGroupid);
+
 	printf("%s\n", queryBuff);
 
-	connectDB(&db, "localhost", "root", "jjssm", "shield");
 	if(sendQuery(&db, queryBuff) == FALSE) {
 		return FALSE;
 	}
 
-	closeDB(&db, 0);
+	closeDB(&db, &res);
 
 	return TRUE;
 }
 
+int getRandGroupid(MYSQL** db, MYSQL_RES** res)
+{
+	int randid = 0;
+	char queryBuff[128];
+
+	while(randid == 0) {
+		randid = (rand() % 10000) + (((rand() % 9)+1) * 10000);
+
+		sprintf(queryBuff, "select * from userlist where groupid like %d", randid);
+
+		if(getQueryDataNum(db, queryBuff, res) == 0) {
+			break;
+		}
+
+		randid = 0;
+	}
+
+	return randid;
+}
 
 
 

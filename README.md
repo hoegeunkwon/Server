@@ -28,3 +28,11 @@ insert into userlist(id, pw, name, perm, groupid, fd) values('test_2', '1234', '
 
 parents
 child
+
+Shield Protocol
+
+1. parents, child
+
+	(1) parents
+		join id pw
+		login id pw
