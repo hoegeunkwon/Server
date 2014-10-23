@@ -82,9 +82,9 @@ void parentsClient(int clientSockFd, char* buff)
 	char* p;
 	UserInfo data;
 
-	puts("parents");
-	// join user check
-	while(buffSize = read(clientSockFd, buff, BUFF_SIZE)) {
+	puts("parents fun");
+	// join parents check
+	while( (buffSize = read(clientSockFd, buff, BUFF_SIZE)) != 0) {
 		char tmp[FIELD_SIZE];
 		char id[FIELD_SIZE];
 		char pw[FIELD_SIZE];
@@ -99,7 +99,7 @@ void parentsClient(int clientSockFd, char* buff)
 		printf("%s %s %s\n", tmp, id, pw);
 
 		if(strcmp(tmp, "login") == 0) {		// login msg
-			if(checkUserPW(id, pw, &data) == TRUE) {
+			if(checkParentsPW(id, pw, &data) == TRUE) {
 				puts("Login Success");
 				data.fd = clientSockFd; 
 				//testDisplay(&data);
@@ -112,7 +112,7 @@ void parentsClient(int clientSockFd, char* buff)
 		
 		printf("%s %s %s\n", tmp, id, pw);
 		if(strcmp(tmp, "join") == 0) {	// join msg
-			if(checkUserID(id) == FALSE) {	// possible join
+			if(checkParentsID(id) == FALSE) {	// possible join
 				puts("Possible join");
 				if(joinParents(id, pw) == TRUE) {
 					puts("Success Join");
@@ -125,7 +125,9 @@ void parentsClient(int clientSockFd, char* buff)
 		}
 	}
 
-	while(buffSize = read(clientSockFd, buff, BUFF_SIZE)) {
+	// after login
+	while( (buffSize = read(clientSockFd, buff, BUFF_SIZE)) != 0) {
+		sendMsg(clientSockFd, buff, BUFF_SIZE);
 
 	}
 
@@ -133,14 +135,64 @@ void parentsClient(int clientSockFd, char* buff)
 
 void childClient(int clientSockFd, char* buff)
 {
-	puts("child");
+	int buffSize;
+	char* p;
+	UserInfo data;
+
+	puts("child fun");
+	// join child check
+	while( (buffSize = read(clientSockFd, buff, BUFF_SIZE)) != 0) {
+		char tmp[FIELD_SIZE];
+		char name[FIELD_SIZE];
+		char groupid[FIELD_SIZE];
+
+		p = strtok(buff, " "); if(p == 0) continue;
+		strcpy(tmp, p);
+		p = strtok(NULL, " "); if(p == 0) continue;
+		strcpy(name, p);
+		p = strtok(NULL, " "); if(p == 0) continue;
+		strcpy(groupid, p);
+
+		printf("%s %s %s\n", tmp, name, groupid);
+
+		if(strcmp(tmp, "login") == 0) {		// login msg
+			if(checkChildLogin(name, groupid, &data) == TRUE) {
+				puts("Login Success");
+				data.fd = clientSockFd; 
+				//testDisplay(&data);
+				insertClientData(clientSockFd, &data);
+				break;
+			} else {
+				puts("Login Fail");
+			}
+		}
+		
+		if(strcmp(tmp, "join") == 0) {	// join msg
+			if(checkChildName(name, groupid) == FALSE) {	// possible join
+				puts("Possible join");
+				if(joinChild(name, groupid) == TRUE) {
+					puts("Success Join");
+				} else {
+					puts("Not Join");
+				}
+			} else {
+				puts("Join Fail");
+			}
+		}
+	}
+
+	// after login
+	while( (buffSize = read(clientSockFd, buff, BUFF_SIZE)) != 0) {
+		sendMsg(clientSockFd, buff, BUFF_SIZE);
+
+	}
 }
 
-int checkUserID(char* id)
+int checkParentsID(char* id)
 {
 	MYSQL* db;
 	MYSQL_RES* res;
-	char queryBuff[50];
+	char queryBuff[256];
 	
 	sprintf(queryBuff, "select * from userlist where id like '%s'", id);
 	connectDB(&db, "localhost", "root", "jjssm", "shield");
@@ -153,12 +205,11 @@ int checkUserID(char* id)
 	return TRUE;
 }
 
-int checkUserPW(char* id, char* pw, UserInfo* data)
+int checkParentsPW(char* id, char* pw, UserInfo* data)
 {
-	int i;
 	MYSQL* db;
 	MYSQL_RES* res;
-	char queryBuff[50];
+	char queryBuff[256];
 	
 	sprintf(queryBuff, "select * from userlist where id like '%s'", id);
 	connectDB(&db, "localhost", "root", "jjssm", "shield");
@@ -181,7 +232,7 @@ int joinParents(char* id, char* pw)
 	int randGroupid;
 	MYSQL* db;
 	MYSQL_RES* res;
-	char queryBuff[128];
+	char queryBuff[256];
 	
 	connectDB(&db, "localhost", "root", "jjssm", "shield");
 
@@ -205,7 +256,7 @@ int joinParents(char* id, char* pw)
 int getRandGroupid(MYSQL** db, MYSQL_RES** res)
 {
 	int randid = 0;
-	char queryBuff[128];
+	char queryBuff[256];
 
 	while(randid == 0) {
 		randid = (rand() % 10000) + (((rand() % 9)+1) * 10000);
@@ -220,6 +271,78 @@ int getRandGroupid(MYSQL** db, MYSQL_RES** res)
 	}
 
 	return randid;
+}
+
+int checkChildLogin(char* name, char* groupid, UserInfo* data)
+{
+	MYSQL* db;
+	MYSQL_RES* res;
+	char queryBuff[256];
+	
+	//sprintf(queryBuff, "select * from userlist where groupid like %s", groupid);
+	sprintf(queryBuff, "select * from userlist where name like '%s' and groupid like '%s'", name, groupid);
+	printf("%s\n", queryBuff);
+	
+	connectDB(&db, "localhost", "root", "jjssm", "shield");
+	if( getQueryDataNum(&db, queryBuff, &res ) == 0) {
+		return FALSE;
+	}
+
+	getQueryDataRow(&res, data);
+
+	closeDB(&db, &res);
+
+	return TRUE;
+}
+
+int checkChildName(char* name, char* groupid)
+{
+	MYSQL* db;
+	MYSQL_RES* res;
+	char queryBuff[256];
+	
+	sprintf(queryBuff, "select * from userlist where name like '%s' and groupid like '%s'", name, groupid);
+	connectDB(&db, "localhost", "root", "jjssm", "shield");
+	if( getQueryDataNum(&db, queryBuff, &res) == 0) {
+		return FALSE;
+	}
+
+	closeDB(&db, &res);
+
+	return TRUE;
+}
+
+int joinChild(char* name, char* groupid)
+{
+	MYSQL* db;
+	char queryBuff[256];
+	
+	connectDB(&db, "localhost", "root", "jjssm", "shield");
+
+	sprintf(queryBuff, 
+	"insert into userlist(id, pw, name, perm, groupid, fd) values('', '', '%s', 'child', %d, -1)", 
+	name, atoi(groupid));
+
+	printf("%s\n", queryBuff);
+
+	if(sendQuery(&db, queryBuff) == FALSE) {
+		return FALSE;
+	}
+
+	closeDB(&db, 0);
+
+	return TRUE;
+}
+
+
+int sendMsg(int fd, char* msg, int msgSize)
+{
+	int a;
+	
+	a = write(fd, msg, msgSize);
+	printf("send msg %s - msgSize %d\n", msg, a);
+
+	return 0;
 }
 
 

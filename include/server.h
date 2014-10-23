@@ -36,12 +36,22 @@ int createServer(int port);
 void* connectClient(void* arg);
 void disconnectClient(int clientSockFd);
 void insertClientData(int clientSockFd, UserInfo* data);
+
 void parentsClient(int clientSockFd, char* buff);
 void childClient(int clientSockFd, char* buff);
-int checkUserID(char* id);
-int checkUserPW(char* id, char* pw, UserInfo* data);
+
+int checkParentsID(char* id);
+int checkParentsPW(char* id, char* pw, UserInfo* data);
 int joinParents(char* id, char* pw);
 int getRandGroupid(MYSQL** db, MYSQL_RES** res);
+
+int checkChildLogin(char* name, char* groupid, UserInfo* data);
+int checkChildName(char* name, char* groupid);
+int joinChild(char* name, char* groupid);
+
+int sendMsg(int fd, char* msg, int msgSize);
+
+
 void testDisplay(UserInfo* data);
 
 //int sendMsg(int, char*, char*, int);
