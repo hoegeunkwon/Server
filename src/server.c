@@ -125,10 +125,22 @@ void parentsClient(int clientSockFd, char* buff)
 		}
 	}
 
-	// after login
+	// after login		// toName|fromName|msg
 	while( (buffSize = read(clientSockFd, buff, BUFF_SIZE)) != 0) {
-		sendMsg(clientSockFd, buff, BUFF_SIZE);
+		int toFd;
+		char toName[FIELD_SIZE];
+		char msg[BUFF_SIZE];
+		char sendBuff[BUFF_SIZE];
 
+		p = strtok(buff, "|"); if(p == 0) continue;
+		strcpy(toName, p);
+		p = strtok(NULL, "|"); if(p == 0) continue;
+		strcpy(msg, p);
+
+		toFd = getFindClientFd(toName, data.groupid);
+
+		sprintf(sendBuff, "%s|%s", data.name, msg);
+		sendMsg(toFd, sendBuff, BUFF_SIZE);
 	}
 
 }
@@ -183,8 +195,20 @@ void childClient(int clientSockFd, char* buff)
 
 	// after login
 	while( (buffSize = read(clientSockFd, buff, BUFF_SIZE)) != 0) {
-		sendMsg(clientSockFd, buff, BUFF_SIZE);
+		int toFd;
+		char toName[FIELD_SIZE];
+		char msg[BUFF_SIZE];
+		char sendBuff[BUFF_SIZE];
 
+		p = strtok(buff, "|"); if(p == 0) continue;
+		strcpy(toName, p);
+		p = strtok(NULL, "|"); if(p == 0) continue;
+		strcpy(msg, p);
+
+		toFd = getFindClientFd(toName, data.groupid);
+
+		sprintf(sendBuff, "%s|%s", data.name, msg);
+		sendMsg(toFd, sendBuff, BUFF_SIZE);
 	}
 }
 
@@ -339,10 +363,29 @@ int sendMsg(int fd, char* msg, int msgSize)
 {
 	int a;
 	
+	if(fd == -1) return FALSE;
+
 	a = write(fd, msg, msgSize);
 	printf("send msg %s - msgSize %d\n", msg, a);
 
-	return 0;
+	return TRUE;
+}
+
+int getFindClientFd(char* name, int groupid)
+{
+	int fd = -1;
+	int i;
+	
+	pthread_mutex_lock(&mutex);
+	for(i=0; i<accessUserNum; i++) {
+		if(accessUserArr[i].groupid == groupid && (strcmp(accessUserArr[i].name, name) == 0)) {
+			fd = accessUserArr[i].fd;
+			break;
+		}
+	}
+	pthread_mutex_unlock(&mutex);
+
+	return fd;
 }
 
 

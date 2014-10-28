@@ -50,6 +50,7 @@ int checkChildName(char* name, char* groupid);
 int joinChild(char* name, char* groupid);
 
 int sendMsg(int fd, char* msg, int msgSize);
+int getFindClientFd(char* name, int groupid);
 
 
 void testDisplay(UserInfo* data);
