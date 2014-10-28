@@ -16,23 +16,29 @@
 	primary key(no)
 	);
 
-3.
+	
+	Test Value
+	insert into userlist(id, pw, name, perm, groupid, fd) values('test1', '1234', '부모', 'parents', 54321, -1);
+	insert into userlist(id, pw, name, perm, groupid, fd) values('', '', '권회근', 'child', 54321, -1);
+
+3. Shield Protocol
+	처음에 클라이언트로 접속을하면 parents OR child 를 전송하여 자신이 부모인지, 자식인지 서버에게 알린다.
+	구분자 : '|'
+
+	1. parents
+		(1) login
+			login id pw
+		(2) join
+			join id pw
+		(3) send msg
+			childID|msg
+	
+	2. child
+		(1) login
+			login id pw
+		(2) join
+			join id pw
+		(3) send msg
+			parentsID|msg
 
 
-
-
-
-
-insert into userlist(id, pw, name, perm, groupid, fd) values('test_1', '1234', '', 'parents', 54321, -1);
-insert into userlist(id, pw, name, perm, groupid, fd) values('test_2', '1234', '권회근', 'child', 54321, -1);
-
-parents
-child
-
-Shield Protocol
-
-1. parents, child
-
-	(1) parents
-		join id pw
-		login id pw
