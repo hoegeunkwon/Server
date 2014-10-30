@@ -18,7 +18,7 @@
 
 #define BUFF_SIZE 512
 #define FIELD_SIZE 20
-#define ACCESS_USER_SIZE 100
+#define ACCESS_USER_SIZE 500
 #define SERVER_PORT 55555
 
 #define DEBUG
@@ -51,6 +51,8 @@ int joinChild(char* name, char* groupid);
 
 int sendMsg(int fd, char* msg, int msgSize);
 int getFindClientFd(char* name, int groupid);
+
+int fileMediation(unsigned int fileSize, int toFd, int fromFd);
 
 
 void testDisplay(UserInfo* data);

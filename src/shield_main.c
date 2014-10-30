@@ -28,9 +28,12 @@ int main(int argc, char** argv)
 	char addrBuff[20];
 	pthread_t tId;
 
+	
 	if(pthread_mutex_init(&mutex, 0)) {
 		perror("mutex");
 		exit(0);
+	} else {
+		puts("Mutex Setting");
 	}
 
 	srand(time(0)); // Rand Port를 생성하려고
@@ -51,12 +54,21 @@ int main(int argc, char** argv)
 
 		pthread_mutex_lock(&mutex);
 		accessUserArr[accessUserNum++].fd = clientSockFd;
+		
+		LOG(
+			int i;
+			for(i=0; i<accessUserNum; i++) {
+				printf("%d ", accessUserArr[i].fd);
+			}
+			puts("");
+		)
+
 		pthread_mutex_unlock(&mutex);
 
 		if(pthread_create(&tId, 0, connectClient, &clientSockFd) != 0) {
 			perror("thread create");
 		}
-		pthread_detach(tId);    // 독립적인 자원관리
+		//pthread_detach(tId);    // 독립적인 자원관리
 	}
 
 	close(serverSockFd);

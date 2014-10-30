@@ -53,12 +53,19 @@ void disconnectClient(int clientSockFd)
 	for(i=0; i<accessUserNum; i++) {
 		if(accessUserArr[i].fd == clientSockFd) {
 			accessUserArr[i] = accessUserArr[accessUserNum-1];
-			accessUserNum--;
+			--accessUserNum;
 			close(clientSockFd);
 			break;
 		}
 	}
 	printf("DisConnected Now AccessUserNum : %d\n", accessUserNum);
+	LOG(
+		int i;
+		for(i=0; i<accessUserNum; i++) {
+			printf("%d ", accessUserArr[i].fd);
+		}
+		puts("");
+	)
 	pthread_mutex_unlock(&mutex);
 }
 
@@ -80,6 +87,7 @@ void parentsClient(int clientSockFd, char* buff)
 {
 	int buffSize;
 	char* p;
+	char sendBuff[BUFF_SIZE];
 	UserInfo data;
 
 	puts("parents fun");
@@ -104,6 +112,8 @@ void parentsClient(int clientSockFd, char* buff)
 				data.fd = clientSockFd; 
 				//testDisplay(&data);
 				insertClientData(clientSockFd, &data);
+				sprintf(sendBuff, "groupid %d", data.groupid);
+				sendMsg(clientSockFd, sendBuff, BUFF_SIZE);
 				break;
 			} else {
 				puts("Login Fail");
@@ -128,19 +138,27 @@ void parentsClient(int clientSockFd, char* buff)
 	// after login		// toName|fromName|msg
 	while( (buffSize = read(clientSockFd, buff, BUFF_SIZE)) != 0) {
 		int toFd;
+		char cmd[FIELD_SIZE];
 		char toName[FIELD_SIZE];
 		char msg[BUFF_SIZE];
-		char sendBuff[BUFF_SIZE];
 
 		p = strtok(buff, "|"); if(p == 0) continue;
+		strcpy(cmd, p);
+		p = strtok(NULL, "|"); if(p == 0) continue;
 		strcpy(toName, p);
 		p = strtok(NULL, "|"); if(p == 0) continue;
 		strcpy(msg, p);
 
 		toFd = getFindClientFd(toName, data.groupid);
+		
+		if(strcmp(cmd, "msg") == 0) {
+			sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
+			sendMsg(toFd, sendBuff, BUFF_SIZE);
+		} else if(strcmp(cmd, "file") == 0) {
+			sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
+			sendMsg(toFd, sendBuff, BUFF_SIZE);
 
-		sprintf(sendBuff, "%s|%s", data.name, msg);
-		sendMsg(toFd, sendBuff, BUFF_SIZE);
+		}
 	}
 
 }
@@ -149,6 +167,7 @@ void childClient(int clientSockFd, char* buff)
 {
 	int buffSize;
 	char* p;
+	char sendBuff[BUFF_SIZE];
 	UserInfo data;
 
 	puts("child fun");
@@ -184,6 +203,7 @@ void childClient(int clientSockFd, char* buff)
 				puts("Possible join");
 				if(joinChild(name, groupid) == TRUE) {
 					puts("Success Join");
+					sendMsg(clientSockFd, "Success Join", BUFF_SIZE);
 				} else {
 					puts("Not Join");
 				}
@@ -196,20 +216,56 @@ void childClient(int clientSockFd, char* buff)
 	// after login
 	while( (buffSize = read(clientSockFd, buff, BUFF_SIZE)) != 0) {
 		int toFd;
+		char cmd[FIELD_SIZE];
 		char toName[FIELD_SIZE];
 		char msg[BUFF_SIZE];
-		char sendBuff[BUFF_SIZE];
 
 		p = strtok(buff, "|"); if(p == 0) continue;
+		strcpy(cmd, p);
+		p = strtok(NULL, "|"); if(p == 0) continue;
 		strcpy(toName, p);
 		p = strtok(NULL, "|"); if(p == 0) continue;
 		strcpy(msg, p);
 
 		toFd = getFindClientFd(toName, data.groupid);
 
-		sprintf(sendBuff, "%s|%s", data.name, msg);
+		sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
 		sendMsg(toFd, sendBuff, BUFF_SIZE);
+
+		if(strcmp(cmd, "file") == 0) {
+			p = strtok(msg, " ");
+			p = strtok(NULL, " ");
+			printf("file size: %d\n", atoi(p));
+			fileMediation(atoi(p), toFd, clientSockFd);
+		}
+		
+		/*
+		if(strcmp(cmd, "msg") == 0) {
+			sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
+			sendMsg(toFd, sendBuff, BUFF_SIZE);
+		} else if(strcmp(cmd, "file") == 0) {
+			// file|부모|파일명
+			//sprintf(sendBuff, "", );
+
+		}
+		*/
 	}
+}
+
+int fileMediation(unsigned int fileSize, int toFd, int fromFd)
+{
+	unsigned int buffSize = 0;
+	char fileBuff[BUFF_SIZE];
+
+	puts("fileMediation start");
+	while( (buffSize += read(fromFd, fileBuff, BUFF_SIZE)) != 0) {
+		write(toFd, fileBuff, buffSize);
+
+		if(fileSize == buffSize) break;
+	}
+	puts("fileMediation end");
+
+	return 0;
 }
 
 int checkParentsID(char* id)
