@@ -36,14 +36,15 @@ Shield Protocol
 	
 	2. child
 		(1) login
-			login id pw
+			login id groupid
 		(2) join
-			join id pw
+			join id groupid
 		(3) send msg
 			msg|부모|메시지내용
 
 	3. File Transport Protocol
-		(1) child:	file|부모|파일이름 파일크기		sendMsg;
-		(2) parents:	파일을 받을준비가 완료되면
-					file|자식이름|ok				sendMsg;
-
+		(1) child
+			file|부모|파일이름 파일크기		sendMsg;
+		(2) parents
+			파일을 받을준비가 완료되면
+			file|자식이름|ok			sendMsg;
