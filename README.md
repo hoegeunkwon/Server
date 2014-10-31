@@ -1,7 +1,8 @@
 1. setting.sh를 실행시킨다.
 
 2. DB 설정
-	mysql -u root -p jjssm
+
+mysql -u root -p jjssm
 
 	create database shield;
 	
