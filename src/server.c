@@ -255,13 +255,15 @@ void childClient(int clientSockFd, char* buff)
 int fileMediation(unsigned int fileSize, int toFd, int fromFd)
 {
 	unsigned int buffSize = 0;
+	unsigned int totalSize = 0;
 	char fileBuff[BUFF_SIZE];
 
 	puts("fileMediation start");
-	while( (buffSize += read(fromFd, fileBuff, BUFF_SIZE)) != 0) {
+	while( (buffSize = read(fromFd, fileBuff, BUFF_SIZE)) != 0) {
 		write(toFd, fileBuff, buffSize);
+		totalSize += buffSize;
 
-		if(fileSize == buffSize) break;
+		if(fileSize == totalSize) break;
 	}
 	puts("fileMediation end");
 
