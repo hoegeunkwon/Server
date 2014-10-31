@@ -1,8 +1,7 @@
-1. setting.sh를 실행시킨다.
+setting.sh를 실행시킨다.
 
-2. DB 설정
-
-mysql -u root -p jjssm
+DB 설정
+	mysql -u root -p jjssm
 
 	create database shield;
 	
@@ -22,7 +21,7 @@ mysql -u root -p jjssm
 	insert into userlist(id, pw, name, perm, groupid, fd) values('test1', '1234', '부모', 'parents', 54321, -1);
 	insert into userlist(id, pw, name, perm, groupid, fd) values('', '', '권회근', 'child', 54321, -1);
 
-3. Shield Protocol
+Shield Protocol
 	처음에 클라이언트로 접속을하면 parents OR child 를 전송하여 자신이 부모인지, 자식인지 서버에게 알린다.
 	구분자 : '|'
 
