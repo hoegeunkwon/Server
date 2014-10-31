@@ -157,7 +157,6 @@ void parentsClient(int clientSockFd, char* buff)
 		} else if(strcmp(cmd, "file") == 0) {
 			sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
 			sendMsg(toFd, sendBuff, BUFF_SIZE);
-
 		}
 	}
 
@@ -238,17 +237,6 @@ void childClient(int clientSockFd, char* buff)
 			printf("file size: %d\n", atoi(p));
 			fileMediation(atoi(p), toFd, clientSockFd);
 		}
-		
-		/*
-		if(strcmp(cmd, "msg") == 0) {
-			sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
-			sendMsg(toFd, sendBuff, BUFF_SIZE);
-		} else if(strcmp(cmd, "file") == 0) {
-			// file|부모|파일명
-			//sprintf(sendBuff, "", );
-
-		}
-		*/
 	}
 }
 
