@@ -22,8 +22,7 @@ DB 설정
 	insert into userlist(id, pw, name, perm, groupid, fd) values('', '', '권회근', 'child', 54321, -1);
 
 Shield Protocol
-	처음에 클라이언트로 접속을하면 parents OR child 를 전송하여 자신이 부모인지, 자식인지 서버에게 알린다.
-	구분자 : '|'
+	처음에 클라이언트로 접속을하면 parents OR child 를 전송하여 자신이 부모인지, 자식인지 서버에게 알린다.(구분자 : '|')
 
 	1. parents
 		(1) login
@@ -45,5 +44,4 @@ Shield Protocol
 		(1) child:	file|부모|파일이름 파일크기		sendMsg;
 		(2) parents:	파일을 받을준비가 완료되면
 				file|자식이름|ok			sendMsg;
-
 
