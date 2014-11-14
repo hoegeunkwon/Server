@@ -151,6 +151,7 @@ void parentsClient(int clientSockFd, char* buff)
 
 		toFd = getFindClientFd(toName, data.groupid);
 		
+		memset(sendBuff, 0, sizeof(sendBuff));
 		if(strcmp(cmd, "msg") == 0) {
 			sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
 			sendMsg(toFd, sendBuff, BUFF_SIZE);
@@ -227,6 +228,8 @@ void childClient(int clientSockFd, char* buff)
 		strcpy(msg, p);
 
 		toFd = getFindClientFd(toName, data.groupid);
+
+		memset(sendBuff, 0, sizeof(sendBuff));
 
 		sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
 		sendMsg(toFd, sendBuff, BUFF_SIZE);
@@ -411,7 +414,10 @@ int sendMsg(int fd, char* msg, int msgSize)
 	
 	if(fd == -1) return FALSE;
 
-	a = write(fd, msg, msgSize);
+	strcat(msg, "\r\n");
+
+	//a = write(fd, msg, msgSize);
+	a = write(fd, msg, strlen(msg));
 	printf("send msg %s - msgSize %d\n", msg, a);
 
 	return TRUE;
