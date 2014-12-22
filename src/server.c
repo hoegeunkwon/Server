@@ -152,6 +152,7 @@ void parentsClient(int clientSockFd, char* buff)
 		toFd = getFindClientFd(toName, data.groupid);
 		
 		memset(sendBuff, 0, sizeof(sendBuff));
+
 		if(strcmp(cmd, "msg") == 0) {
 			sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
 			sendMsg(toFd, sendBuff, BUFF_SIZE);
@@ -159,6 +160,7 @@ void parentsClient(int clientSockFd, char* buff)
 			sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
 			sendMsg(toFd, sendBuff, BUFF_SIZE);
 		}
+		memset(buff, 0, BUFF_SIZE);
 	}
 
 }
@@ -240,6 +242,7 @@ void childClient(int clientSockFd, char* buff)
 			printf("file size: %d\n", atoi(p));
 			fileMediation(atoi(p), toFd, clientSockFd);
 		}
+		memset(buff, 0, BUFF_SIZE);
 	}
 }
 
