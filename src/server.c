@@ -205,7 +205,7 @@ void childClient(int clientSockFd, char* buff)
 				puts("Possible join");
 				if(joinChild(name, groupid) == TRUE) {
 					puts("Success Join");
-					sendMsg(clientSockFd, "Success Join", BUFF_SIZE);
+					//sendMsg(clientSockFd, "Success Join", BUFF_SIZE);	// error because const pointer.
 				} else {
 					puts("Not Join");
 				}
