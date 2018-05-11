@@ -14,7 +14,7 @@
 #include <arpa/inet.h>
 #include <pthread.h>
 
-#include "./../include/shieldsql.h"
+#include "shieldsql.h"
 
 #define BUFF_SIZE 512
 #define FIELD_SIZE 20

@@ -1,4 +1,4 @@
-#include "./../include/shieldsql.h"
+#include "shieldsql.h"
 /*
 int main()
 {

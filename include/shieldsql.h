@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "/usr/include/mysql/mysql.h"
+#include <mysql/mysql.h>
 
 #define TRUE	0
 #define FALSE 	1

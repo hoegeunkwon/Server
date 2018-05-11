@@ -1,5 +1,5 @@
-#include "./../include/server.h"
-#include "./../include/shieldsql.h"
+#include "server.h"
+#include "shieldsql.h"
 
 /*
    int main()
