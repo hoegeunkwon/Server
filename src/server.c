@@ -113,7 +113,7 @@ void parentsClient(int clientSockFd, char* buff)
 				//testDisplay(&data);
 				insertClientData(clientSockFd, &data);
 				sprintf(sendBuff, "groupid %d", data.groupid);
-				sendMsg(clientSockFd, sendBuff, BUFF_SIZE);
+				sendMsg(clientSockFd, sendBuff);
 				break;
 			} else {
 				puts("Login Fail");
@@ -155,10 +155,10 @@ void parentsClient(int clientSockFd, char* buff)
 
 		if(strcmp(cmd, "msg") == 0) {
 			sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
-			sendMsg(toFd, sendBuff, BUFF_SIZE);
+			sendMsg(toFd, sendBuff);
 		} else if(strcmp(cmd, "file") == 0) {
 			sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
-			sendMsg(toFd, sendBuff, BUFF_SIZE);
+			sendMsg(toFd, sendBuff);
 		}
 		memset(buff, 0, BUFF_SIZE);
 	}
@@ -205,7 +205,7 @@ void childClient(int clientSockFd, char* buff)
 				puts("Possible join");
 				if(joinChild(name, groupid) == TRUE) {
 					puts("Success Join");
-					//sendMsg(clientSockFd, "Success Join", BUFF_SIZE);	// error because const pointer.
+					//sendMsg(clientSockFd, "Success Join");	// error because const pointer.
 				} else {
 					puts("Not Join");
 				}
@@ -234,7 +234,7 @@ void childClient(int clientSockFd, char* buff)
 		memset(sendBuff, 0, sizeof(sendBuff));
 
 		sprintf(sendBuff, "%s|%s|%s", cmd, data.name, msg);
-		sendMsg(toFd, sendBuff, BUFF_SIZE);
+		sendMsg(toFd, sendBuff);
 
 		if(strcmp(cmd, "file") == 0) {
 			p = strtok(msg, " ");
@@ -411,7 +411,7 @@ int joinChild(char* name, char* groupid)
 }
 
 
-int sendMsg(int fd, char* msg, int msgSize)
+int sendMsg(int fd, char* msg)
 {
 	int a;
 	
@@ -419,7 +419,6 @@ int sendMsg(int fd, char* msg, int msgSize)
 
 	strcat(msg, "\r\n");
 
-	//a = write(fd, msg, msgSize);
 	a = write(fd, msg, strlen(msg));
 	printf("send msg %s - msgSize %d\n", msg, a);
 

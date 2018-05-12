@@ -49,7 +49,7 @@ int checkChildLogin(char* name, char* groupid, UserInfo* data);
 int checkChildName(char* name, char* groupid);
 int joinChild(char* name, char* groupid);
 
-int sendMsg(int fd, char* msg, int msgSize);
+int sendMsg(int fd, char* msg);
 int getFindClientFd(char* name, int groupid);
 
 int fileMediation(unsigned int fileSize, int toFd, int fromFd);
