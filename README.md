@@ -1,4 +1,21 @@
-setting.sh를 실행시킨다.
+# ShieldServer
+
+## How to build and install:
+
+	./setting.sh		# Install mysql-server, libmysqlclient-dev packages.
+				# Setup for ufw about port.
+	mkdir build		# Create a build directory.
+	cd build; cmake ..	# Configure the project.
+	make			# Build all default targets.
+	sudo make install	# Install binary and library files.
+	sudo ldconfig		# Reload library path.
+
+## How to uninstall binary and library files:
+
+	cd build				# Move to build directory.
+	sudo xargs rm < install_manifest.txt	# remove files.
+
+## How to use:
 
 DB 설정
 	
