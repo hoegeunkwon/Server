@@ -4,6 +4,11 @@ project(ShieldServer)
 
 add_compile_options(-W -Wall)
 
+# Set include directories for library and binary
+include_directories(PUBLIC
+	${PROJECT_SOURCE_DIR}/include
+)
+
 # Create library
 set(LIB_FILES
 	src/shieldsql.c
@@ -14,11 +19,6 @@ add_library(shieldsql
 	${LIB_FILES}
 )
 
-target_include_directories(shieldsql
-	PUBLIC
-	${PROJECT_SOURCE_DIR}/include
-)
-
 # Create binary
 set(SRC_FILES
 	src/server.c
@@ -26,11 +26,6 @@ set(SRC_FILES
 )
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
-
-target_include_directories(${PROJECT_NAME}
-	PUBLIC
-	${PROJECT_SOURCE_DIR}/include
-)
 
 target_link_libraries(${PROJECT_NAME}
 	PUBLIC
