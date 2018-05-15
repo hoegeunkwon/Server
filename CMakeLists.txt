@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(ShieldServer)
+project(shieldserver)
 
 add_compile_options(-W -Wall)
 
@@ -43,3 +43,23 @@ install(TARGETS ${PROJECT_NAME}
 install(TARGETS shieldsql
 	LIBRARY DESTINATION lib
 )
+
+# Create package
+set(DEB_VERSION_MAJOR 1)
+set(DEB_VERSION_MINOR 0)
+set(DEB_VERSION "${DEB_VERSION_MAJOR}.${DEB_VERSION_MINOR}")
+
+# Tell CPack to generate a .deb package
+set(CPACK_GENERATOR "DEB")
+
+# Set package install path
+set(CPACK_PACKAGING_INSTALL_PREFIX /usr/local)
+
+# Set an author
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Hoegeun Kwon")
+
+# Set a Package Version
+set(CPACK_PACKAGE_VERSION ${DEB_VERSION})
+
+# Include CPack
+include(CPack)
