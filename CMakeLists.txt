@@ -27,10 +27,13 @@ set(SRC_FILES
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
+include(FindPkgConfig)
+pkg_check_modules(PKGS REQUIRED mysqlclient)
+
 target_link_libraries(${PROJECT_NAME}
 	PUBLIC
 	shieldsql
-	-lm -lpthread -lmysqlclient
+	-lm -lpthread ${PKGS_LIBRARIES}
 )
 
 # Setup install
