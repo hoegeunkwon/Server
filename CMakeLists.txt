@@ -19,6 +19,9 @@ add_library(shieldsql
 	${LIB_FILES}
 )
 
+set(SHIELDSQL_VERSION 1.0)
+set_target_properties(shieldsql PROPERTIES VERSION ${SHIELDSQL_VERSION})
+
 # Create binary
 set(SRC_FILES
 	src/server.c
