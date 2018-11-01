@@ -19,8 +19,10 @@ add_library(shieldsql
 	${LIB_FILES}
 )
 
-set(SHIELDSQL_VERSION 1.0)
-set_target_properties(shieldsql PROPERTIES VERSION ${SHIELDSQL_VERSION})
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 0)
+set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}")
+set_target_properties(shieldsql PROPERTIES VERSION ${VERSION})
 
 # Create binary
 set(SRC_FILES
@@ -51,10 +53,6 @@ install(TARGETS shieldsql
 )
 
 # Create package
-set(DEB_VERSION_MAJOR 1)
-set(DEB_VERSION_MINOR 0)
-set(DEB_VERSION "${DEB_VERSION_MAJOR}.${DEB_VERSION_MINOR}")
-
 # Tell CPack to generate a .deb package
 set(CPACK_GENERATOR "DEB")
 
@@ -65,7 +63,7 @@ set(CPACK_PACKAGING_INSTALL_PREFIX /usr/local)
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Hoegeun Kwon")
 
 # Set a Package Version
-set(CPACK_PACKAGE_VERSION ${DEB_VERSION})
+set(CPACK_PACKAGE_VERSION ${VERSION})
 
 # Include CPack
 include(CPack)
