@@ -65,5 +65,8 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Hoegeun Kwon")
 # Set a Package Version
 set(CPACK_PACKAGE_VERSION ${VERSION})
 
+# Set package dependence
+set (CPACK_DEBIAN_PACKAGE_DEPENDS "libmysqlclient20")
+
 # Include CPack
 include(CPack)
